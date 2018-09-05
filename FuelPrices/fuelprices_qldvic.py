@@ -11,6 +11,9 @@ from datetime import datetime
 
 class FuelPrices_QLDVIC:
 
+    def __init__(self):
+        self.state = 'QLDVIC'
+
     def main(self):
 
         postcodes_file = 'postcodes_latlng.csv'
@@ -61,11 +64,11 @@ class FuelPrices_QLDVIC:
             df_prices = pd.DataFrame(prices, columns=['date', 'id', 'fueltype', 'price'])
             df_prices = df_prices.drop_duplicates()
 
-            # save data as csv file
-            archive_folder = 'W:\RESEARCH\Personal Folders\Jeremy\WebScraping\FuelPrices\Archive'
-            df_stations.to_csv(os.path.join(archive_folder, 'fuelstations_qld&vic.csv'), index=False)
-            df_prices.to_csv(os.path.join(archive_folder, 'fuelprices_qld&vic_' + datetime.today().strftime('%Y%m%d') \
-                + '.csv'), index=False)
+            # return dictionary of dataframes
+            dictData = {'stations': df_stations,
+                        'prices': df_prices}
+
+            return dictData
 
 if __name__ == "__main__":
     fp_qldvic = FuelPrices_QLDVIC()

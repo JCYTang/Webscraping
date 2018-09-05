@@ -6,6 +6,9 @@ from datetime import datetime
 
 class FuelPrices_NSW:
 
+    def __init__(self):
+        self.state = 'NSW'
+
     def main(self):
 
         url = 'https://api.onegov.nsw.gov.au/oauth/client_credential/accesstoken'
@@ -53,6 +56,12 @@ class FuelPrices_NSW:
         df_stations.to_csv(os.path.join(archive_folder, 'fuelstations_nsw.csv'), index=False)
         df_prices.to_csv(os.path.join(archive_folder, 'fuelprices_nsw_' + datetime.today().strftime('%Y%m%d') + '.csv'), \
             index = False)
+
+        # return dictionary of dataframes
+        dictData = {'stations': df_stations,
+                    'prices': df_prices}
+
+        return dictData
 
 if __name__ == "__main__":
     fp_nsw = FuelPrices_NSW()

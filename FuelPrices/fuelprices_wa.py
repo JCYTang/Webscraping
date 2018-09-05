@@ -12,6 +12,9 @@ from datetime import datetime
 
 class FuelPrices_WA:
 
+    def __init__(self):
+        self.state = 'WA'
+
     def main(self):
 
         fueltypes = ['ULP', 'PULP', 'Diesel', '98 RON', 'E85', 'LPG']
@@ -53,10 +56,11 @@ class FuelPrices_WA:
         df_stations = pd.DataFrame(stations, columns=['id', 'brand', 'name', 'address', 'suburb', 'state'])
         df_stations = df_stations.drop_duplicates()
 
-        archive_folder = 'W:\RESEARCH\Personal Folders\Jeremy\WebScraping\FuelPrices\Archive'
-        df_stations.to_csv(os.path.join(archive_folder, 'fuelstations_wa.csv'), index=False)
-        df_prices.to_csv(os.path.join(archive_folder, 'fuelprices_wa_' + datetime.today().strftime('%Y%m%d') + '.csv'), \
-            index=False)
+        # return dictionary of dataframes
+        dictData = {'stations': df_stations,
+                    'prices': df_prices}
+
+        return dictData
 
 if __name__ == "__main__":
     fp_wa = FuelPrices_WA()
