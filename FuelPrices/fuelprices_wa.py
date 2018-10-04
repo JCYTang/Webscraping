@@ -7,7 +7,6 @@ from bs4 import BeautifulSoup
 import re
 import time
 import pandas as pd
-import os
 from datetime import datetime
 
 class FuelPrices_WA:
@@ -40,20 +39,22 @@ class FuelPrices_WA:
             rows = soup.find_all(class_=re.compile('iceDatTblRow.*'))
             for row in rows:
                 items = row.find_all('td', class_='iceDatTblCol')
-                price = items[0].find('span', class_='iceOutTxt').text
-                brand = items[2].find('span', class_='iceOutTxt').text
-                name = items[3].find('span', class_='iceOutTxt').text
-                address = items[4].find('span', class_='iceOutTxt').text
-                suburb = items[5].find('span', class_='iceOutTxt').text
+                price = items[0].find('span', class_='iceOutTxt').text.strip()
+                brand = items[2].find('span', class_='iceOutTxt').text.strip()
+                name = items[3].find('span', class_='iceOutTxt').text.strip()
+                address = items[4].find('span', class_='iceOutTxt').text.strip()
+                suburb = items[5].find('span', class_='iceOutTxt').text.strip()
                 state = 'WA'
+                postcode = ''
                 id = name + '|' + address
                 prices.append([date, id, fueltype, price])
-                stations.append([id, brand, name, address, suburb, state])
+                stations.append([id, brand, name, address, suburb, state, postcode])
 
         browser.quit()
 
         df_prices = pd.DataFrame(prices, columns=['date', 'id', 'fueltype', 'price'])
-        df_stations = pd.DataFrame(stations, columns=['id', 'brand', 'name', 'address', 'suburb', 'state'])
+        df_prices = df_prices.drop_duplicates(subset=['date', 'id', 'fueltype'])
+        df_stations = pd.DataFrame(stations, columns=['id', 'brand', 'name', 'address', 'suburb', 'state', 'postcode'])
         df_stations = df_stations.drop_duplicates()
 
         # return dictionary of dataframes

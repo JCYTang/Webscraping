@@ -1,7 +1,6 @@
 import json
 import requests
 import pandas as pd
-import os
 from datetime import datetime
 
 class FuelPrices_NSW:
@@ -51,11 +50,11 @@ class FuelPrices_NSW:
         df_prices.columns.values[1] = 'id'
         df_prices['price'] = pd.to_numeric(df_prices['price'])
 
-        # save data as csv file
-        archive_folder = 'W:\RESEARCH\Personal Folders\Jeremy\WebScraping\FuelPrices\Archive'
-        df_stations.to_csv(os.path.join(archive_folder, 'fuelstations_nsw.csv'), index=False)
-        df_prices.to_csv(os.path.join(archive_folder, 'fuelprices_nsw_' + datetime.today().strftime('%Y%m%d') + '.csv'), \
-            index = False)
+        # # save data as csv file
+        # archive_folder = 'W:\RESEARCH\Personal Folders\Jeremy\WebScraping\FuelPrices\Archive'
+        # df_stations.to_csv(os.path.join(archive_folder, 'fuelstations_nsw.csv'), index=False)
+        # df_prices.to_csv(os.path.join(archive_folder, 'fuelprices_nsw_' + datetime.today().strftime('%Y%m%d') + '.csv'), \
+        #     index = False)
 
         # return dictionary of dataframes
         dictData = {'stations': df_stations,

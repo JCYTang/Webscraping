@@ -2,7 +2,6 @@ import json
 import requests
 import pandas as pd
 import csv
-import os
 from datetime import datetime
 
 #open up postcodes file with latitude and longitude co-ordinates
@@ -34,27 +33,28 @@ class FuelPrices_QLDVIC:
 
                 response = requests.get(url, params=parameters)
                 data = response.json()
-                print(data)
+                #print(data)
                 if list(data['message'].keys())[0] != 'error':
                     for station in data['message']['list']:
-                        print(row[3], row[4], row[5], row[6], station)
-                        id = station.get('id')
-                        brand = station.get('brand')
+                        #print(row[3], row[4], row[5], row[6], station)
+                        id = station.get('id').strip()
+                        brand = station.get('brand').strip()
                         if len(brand) > 2: brand = brand.capitalize()
-                        name = station.get('name')
-                        address = station.get('address')
-                        suburb = station.get('suburb')
-                        state = station.get('state')
+                        name = station.get('name').strip()
+                        address = station.get('address').strip()
+                        suburb = station.get('suburb').strip()
+                        state = station.get('state').strip()
                         postcode = station.get('postCode')
+                        if postcode is not None: postcode = postcode.strip()
 
                         #only consider prices where relevant key is true and the state is qld or vic
                         if state == 'QLD' or state == 'VIC':
                             stations.append([id, brand, name, address, suburb, state, postcode])
                             for type in station['prices']:
                                 if station['prices'][type]['relevant']:
-                                    fueltype = station['prices'][type].get('type')
+                                    fueltype = station['prices'][type].get('type').strip()
                                     price = float(station['prices'][type].get('amount'))
-                                    print([id, name, brand, state, suburb, address, postcode, fueltype, price])
+                                    #print([id, name, brand, state, suburb, address, postcode, fueltype, price])
                                     prices.append([date, id, fueltype, price])
 
             df_stations = pd.DataFrame(stations, columns=['id', 'brand', 'name', 'address', 'suburb', 'state', \
@@ -62,7 +62,7 @@ class FuelPrices_QLDVIC:
             df_stations = df_stations.drop_duplicates()
 
             df_prices = pd.DataFrame(prices, columns=['date', 'id', 'fueltype', 'price'])
-            df_prices = df_prices.drop_duplicates()
+            df_prices = df_prices.drop_duplicates(subset=['date', 'id', 'fueltype'])
 
             # return dictionary of dataframes
             dictData = {'stations': df_stations,
