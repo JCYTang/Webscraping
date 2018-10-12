@@ -15,7 +15,7 @@ class FuelPrices_QLDVIC:
 
     def main(self):
 
-        postcodes_file = 'postcodes_latlng.csv'
+        postcodes_file = '\\\\iml-fs-01\\Work Data\\RESEARCH\\Personal Folders\\Jeremy\\WebScraping\\FuelPrices\\postcodes_latlng.csv'
         url = 'https://petrolspy.com.au/webservice-1/station/box'
         parameters = {}
         stations = []

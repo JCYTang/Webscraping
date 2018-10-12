@@ -5,6 +5,7 @@ from fuelprices_qldvic import FuelPrices_QLDVIC
 import pandas as pd
 import pyodbc
 import os
+import logging
 
 class WebScraping():
     '''initialize with a script class'''
@@ -86,6 +87,9 @@ class WebScraping():
             self.data['prices'] = df_merged
 
 if __name__ == "__main__":
+    log_file = '\\\\iml-fs-01\\Work Data\\RESEARCH\\Personal Folders\\Jeremy\\WebScraping\\FuelPrices\\Archive\\log.log'
+    logging.basicConfig(filename=log_file, filemode='w', level=logging.INFO)
+
     map_file = '\\\\iml-fs-01\\Work Data\\RESEARCH\\Personal Folders\\Jeremy\\WebScraping\\FuelPrices\\brand_fueltype_map.xlsx'
     fp_wa = FuelPrices_WA()
     fp_nsw = FuelPrices_NSW()
@@ -98,11 +102,3 @@ if __name__ == "__main__":
         w.standardize_names(map_file, 'brand')
         w.save_to_csv()
         w.insert_to_database()
-
-    # w = WebScraping(None)
-    # stations_file = os.path.join(w.archive_folder, 'fuelstations_qldvic.csv')
-    # prices_file = os.path.join(w.archive_folder, 'fuelprices_qldvic_20180928.csv')
-    # w.files['SP_ImportFuelStations'] = stations_file
-    # w.files['SP_ImportFuelPrices'] = prices_file
-    #
-    # w.insert_to_database()
