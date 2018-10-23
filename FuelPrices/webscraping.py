@@ -6,6 +6,7 @@ import pandas as pd
 import pyodbc
 import os
 import logging
+import logging.handlers
 
 class WebScraping():
     '''initialize with a script class'''
@@ -88,17 +89,34 @@ class WebScraping():
 
 if __name__ == "__main__":
     log_file = '\\\\iml-fs-01\\Work Data\\RESEARCH\\Personal Folders\\Jeremy\\WebScraping\\FuelPrices\\Archive\\log.log'
-    logging.basicConfig(filename=log_file, filemode='w', level=logging.INFO)
+    mailhost = ('smtp.gmail.com', 587)
+    fromaddr = 'JTang.IML@gmail.com'
+    toaddr = 'jeremy.tang@iml.com.au'
+    username = 'JTang.IML@gmail.com'
+    password = 'IMLpassword'
+    logger = logging.getLogger('log')
+    mail_handler = logging.handlers.SMTPHandler(mailhost=mailhost,fromaddr=fromaddr,toaddrs=toaddr, \
+        subject='fuelprices',credentials=(username, password),secure=())
+    logger.addHandler(mail_handler)
+    logger.setLevel(logging.INFO)
+    #logging.basicConfig(filename=log_file, filemode='w', level=logging.INFO, handlers=mail_handler)
 
-    map_file = '\\\\iml-fs-01\\Work Data\\RESEARCH\\Personal Folders\\Jeremy\\WebScraping\\FuelPrices\\brand_fueltype_map.xlsx'
-    fp_wa = FuelPrices_WA()
-    fp_nsw = FuelPrices_NSW()
-    fp_qldvic = FuelPrices_QLDVIC()
-    scripts = [fp_nsw, fp_wa, fp_qldvic]
-    for script in scripts:
-        w = WebScraping(script)
-        w.execute_script()
-        w.standardize_names(map_file, 'fueltype')
-        w.standardize_names(map_file, 'brand')
-        w.save_to_csv()
-        w.insert_to_database()
+    try:
+        map_file = '\\\\iml-fs-01\\Work Data\\RESEARCH\\Personal Folders\\Jeremy\\WebScraping\\FuelPrices\\brand_fueltype_map.xlsx'
+        fp_wa = FuelPrices_WA()
+        fp_nsw = FuelPrices_NSW()
+        fp_qldvic = FuelPrices_QLDVIC()
+        scripts = [fp_nsw, fp_wa, fp_qldvic]
+
+        for script in scripts:
+            w = WebScraping(script)
+            w.execute_script()
+            logger.info(script.state + ' fuelprice script ran successfully.')
+            w.standardize_names(map_file, 'fueltype')
+            w.standardize_names(map_file, 'brand')
+            w.save_to_csv()
+            w.insert_to_database()
+            logger.info(script.state + ' fuelprice data inserted into database successfully.')
+
+    except:
+        logger.exception('', exc_info=True)
