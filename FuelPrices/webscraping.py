@@ -5,7 +5,6 @@ from fuelprices_qldvic import FuelPrices_QLDVIC
 import pandas as pd
 import pyodbc
 import os
-import logging
 import logging.handlers
 
 class WebScraping():
