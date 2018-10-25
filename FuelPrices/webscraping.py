@@ -106,7 +106,7 @@ if __name__ == "__main__":
         fp_nsw = FuelPrices_NSW()
         fp_qldvic = FuelPrices_QLDVIC()
         scripts = [fp_nsw, fp_wa, fp_qldvic]
-
+        #scripts = [fp_wa, fp_qldvic]
         for script in scripts:
             w = WebScraping(script)
             w.execute_script()
