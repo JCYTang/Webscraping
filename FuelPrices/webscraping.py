@@ -43,7 +43,7 @@ class WebScraping():
             SELECT @rv AS return_value;"""
             crsr.execute(sql)
             return_value = crsr.fetchval()
-            print(return_value)
+            logger.info(self.script.state + ' ' + return_value)
             conn.commit()
         conn.close()
 
@@ -67,7 +67,7 @@ class WebScraping():
 
         else:
             'alert user the mapping table needs to be updated'
-            print(df_merged[df_merged['db ' + field].isnull()][[field, 'db ' + field]])
+            logger.info(self.script.state + df_merged[df_merged['db ' + field].isnull()][[field, 'db ' + field]].to_string())
             unmapped_file = self.archive_folder + '\\unmapped.csv'
             df_merged[df_merged['db ' + field].isnull()][[field, 'db ' + field]].to_csv(unmapped_file, sep=',', index=False)
 
@@ -93,10 +93,12 @@ if __name__ == "__main__":
     toaddr = 'jeremy.tang@iml.com.au'
     username = 'JTang.IML@gmail.com'
     password = 'IMLpassword'
-    logger = logging.getLogger('log')
+    logger = logging.getLogger('fuelprice scrape')
     mail_handler = logging.handlers.SMTPHandler(mailhost=mailhost,fromaddr=fromaddr,toaddrs=toaddr, \
         subject='fuelprices',credentials=(username, password),secure=())
     logger.addHandler(mail_handler)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    mail_handler.setFormatter(formatter)
     logger.setLevel(logging.INFO)
     #logging.basicConfig(filename=log_file, filemode='w', level=logging.INFO, handlers=mail_handler)
 
@@ -106,7 +108,7 @@ if __name__ == "__main__":
         fp_nsw = FuelPrices_NSW()
         fp_qldvic = FuelPrices_QLDVIC()
         scripts = [fp_nsw, fp_wa, fp_qldvic]
-        #scripts = [fp_wa, fp_qldvic]
+        #scripts = [fp_qldvic]
         for script in scripts:
             w = WebScraping(script)
             w.execute_script()
@@ -115,7 +117,7 @@ if __name__ == "__main__":
             w.standardize_names(map_file, 'brand')
             w.save_to_csv()
             w.insert_to_database()
-            logger.info(script.state + ' fuelprice data inserted into database successfully.')
+            #logger.info(script.state + ' fuelprice data inserted into database successfully.')
 
     except:
         logger.exception('', exc_info=True)

@@ -2,6 +2,7 @@ import json
 import requests
 import pandas as pd
 import csv
+import time
 from datetime import datetime
 
 #open up postcodes file with latitude and longitude co-ordinates
@@ -16,11 +17,13 @@ class FuelPrices_QLDVIC:
     def main(self):
 
         postcodes_file = '\\\\iml-fs-01\\Work Data\\RESEARCH\\Personal Folders\\Jeremy\\WebScraping\\FuelPrices\\postcodes_latlng.csv'
-        url = 'https://petrolspy.com.au/webservice-1/station/box'
+        url = 'http://petrolspy.com.au/webservice-1/station/box'
         parameters = {}
         stations = []
         prices = []
         date = datetime.today().strftime('%Y-%m-%d')
+
+        cur_proxy = {'http': 'http://jeremy.cy.tang%40gmail.com:qweasdzx@au207.nordvpn.com:80'}
 
         with open(postcodes_file, newline='') as csvfile:
             reader = csv.reader(csvfile, delimiter = ',')
@@ -31,9 +34,10 @@ class FuelPrices_QLDVIC:
                 parameters['swLat'] = row[5]
                 parameters['swLng'] = row[6]
 
-                response = requests.get(url, params=parameters)
+                time.sleep(2)
+                response = requests.get(url, params=parameters, proxies=cur_proxy)
                 data = response.json()
-                #print(data)
+                print(data)
                 if list(data['message'].keys())[0] != 'error':
                     for station in data['message']['list']:
                         #print(row[3], row[4], row[5], row[6], station)
