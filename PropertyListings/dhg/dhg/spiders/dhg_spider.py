@@ -36,7 +36,7 @@ class DhgSpider(scrapy.Spider):
             yield response.follow(suburb, self.parse_suburb)
 
     def parse_suburb(self, response):
-        listings = response.xpath('//div/ul/li[@class= "search-results__listing"]')
+        listings = response.xpath('//div/ul/li[contains(@data-testid, "listing")]')
         for listing in listings:
 
             # don't scrape listing if it is an ad or project
